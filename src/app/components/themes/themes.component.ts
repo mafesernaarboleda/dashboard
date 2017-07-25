@@ -1,4 +1,5 @@
 import { Component, OnInit, TemplateRef} from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
 import { ThemesService } from './themes.service';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { BsModalRef } from 'ngx-bootstrap/modal/modal-options.class';
@@ -29,7 +30,7 @@ export class ListThemesComponent implements OnInit  {
 		image: ''
 	}
 
-  constructor(private themesService: ThemesService, private modalService: BsModalService) { }
+  constructor(private themesService: ThemesService, private modalService: BsModalService, private router: Router) { }
 
   public ngOnInit() {
     this.ListThemesComponent(moment().format('MM-DD-YYYY'));
@@ -207,6 +208,11 @@ export class ListThemesComponent implements OnInit  {
 
 	public toDate(date){
 	 return moment.utc(date).format('MM/DD/YYYY');
+	}
+
+	public logout(){
+		sessionStorage.removeItem('token');
+		this.router.navigate(['']);
 	}
 
 }
