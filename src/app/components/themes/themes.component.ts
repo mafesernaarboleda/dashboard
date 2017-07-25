@@ -4,7 +4,7 @@ import { BsModalService } from 'ngx-bootstrap/modal';
 import { BsModalRef } from 'ngx-bootstrap/modal/modal-options.class';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import * as moment from 'moment';
-
+import { Theme } from '../../models/theme.model';
 declare const swal: any;
 
 @Component({
@@ -15,13 +15,15 @@ declare const swal: any;
 
 export class ListThemesComponent implements OnInit  {
 
-  public themes  = [];
+  public themes: Theme[];
+	public theme: Theme;
   public errorMessage:string;
 	public modalRef: BsModalRef;
 	public themeForm: FormGroup;
 	public filterThemes: FormGroup;
 	public pictureByte;
 	public submitted = false;
+	public file;
 	public picturePath = {
 		name: 'picture',
 		image: ''
@@ -41,7 +43,7 @@ export class ListThemesComponent implements OnInit  {
 			active: new FormControl('', Validators.required)
 		});
 		this.filterThemes = new FormGroup({
-			date: new FormControl('', Validators.required)
+			date: new FormControl(moment().format('YYYY-MM-DD'), Validators.required)
 		});
   }
 
@@ -59,6 +61,7 @@ export class ListThemesComponent implements OnInit  {
 		let reader = new FileReader();
 		reader.addEventListener('load', () => {
 			preview['src'] = reader.result;
+			this.file = file;
 			this.pictureByte = reader.result;
 		}, false);
 		if (file) {
@@ -76,6 +79,18 @@ export class ListThemesComponent implements OnInit  {
 			(error) => this.errorMessage = error);
   }
 
+	public setData(theme){
+		this.theme = new Theme();
+		this.theme._id = theme._id;
+		this.theme.title = theme.title;
+		this.theme.description = theme.description;
+		this.theme.startDate = theme.startDate;
+		this.theme.endDate = theme.endDate;
+		this.theme.color = theme.color;
+		this.theme.image = theme.image;
+		this.theme.active = theme.active;
+	}
+
 	public deleteTheme(theme){
 		swal({
 		  title: "Are you sure?",
@@ -86,9 +101,9 @@ export class ListThemesComponent implements OnInit  {
 		  confirmButtonText: "Yes, delete it!",
 		  closeOnConfirm: false
 		},() => {
-			theme.active = "false";
-			const start =  moment(theme.startDate);
-			const end = moment(theme.endDate);
+			const start =  moment.utc(theme.startDate);
+			const end = moment.utc(theme.endDate);
+			theme.active = 'false';
 			theme.startDate = {
 				day: start.format('D'),
 				month: start.format('M'),
@@ -99,37 +114,68 @@ export class ListThemesComponent implements OnInit  {
 				month: end.format('M'),
 				year: end.format('YYYY')
 			};
-			this.themesService.updateTheme(theme).subscribe(
-				(response) => swal("Deleted!", "Your imaginary file has been deleted.", "success"),
+			this.setData(theme);
+			this.themesService.updateTheme(this.theme.updateTheme(), theme._id).subscribe(
+				(response) => {
+					swal("Deleted!", "Your imaginary file has been deleted.", "success");
+					this.onFilterThemes(this.filterThemes.value);
+				},
 				(error) => this.errorMessage = error);
 		});
 	}
 
 	public onValidate(theme, isValid){
 		this.submitted = true;
-		const start =  moment(theme.startDate);
-		const end = moment(theme.endDate);
+		const start =  moment.utc(theme.startDate);
+		const end = moment.utc(theme.endDate);
 		theme.startDate = {
-			day: start.format('D'),
-			month: start.format('M'),
-			year: start.format('YYYY')
+		  day: start.format('D'),
+		  month: start.format('M'),
+		  year: start.format('YYYY')
 		};
 		theme.endDate = {
-			day: end.format('D'),
-			month: end.format('M'),
-			year: end.format('YYYY')
+		  day: end.format('D'),
+		  month: end.format('M'),
+		  year: end.format('YYYY')
 		};
-		theme.image = this.pictureByte;
+		theme.active = 'true';
 		if(theme._id !== ''){
-		this.themesService.updateTheme(theme).subscribe(
-				(response) => swal("Update!", "Your imaginary file has been deleted.", "success"),
-				(error) => this.errorMessage = error);
+			if (!this.file){
+				theme.image = this.pictureByte;
+				this.updateTheme(theme);
+			}else {
+				this.themesService.uploadImage(this.file).subscribe(
+							(response) => {
+								theme.image = response.file.url;
+								this.updateTheme(theme);
+						} ,(error) => this.errorMessage = error);
+			}
 		}else{
-			theme.active = 'true';
-			this.themesService.createTheme(theme).subscribe(
-				(response) => swal("Saved!", "Your imaginary file has been deleted.", "success"),
-				(error) => this.errorMessage = error);
+		this.themesService.uploadImage(this.file).subscribe(
+					(response) => {
+						theme.image = response.file.url;
+						this.setData(theme);
+						this.themesService.createTheme(this.theme.updateTheme()).subscribe(
+							(response) => {
+								swal("Saved!", "Your imaginary file has been deleted.", "success");
+								this.onFilterThemes(this.filterThemes.value);
+								this.submitted = false;
+								this.closeFirstModal();
+							},
+							(error) => this.errorMessage = error);
+				} ,(error) => this.errorMessage = error);
 		}
+	}
+
+	public updateTheme(theme){
+		this.setData(theme);
+		this.themesService.updateTheme(this.theme.updateTheme(), theme._id).subscribe(
+				(response) => {
+					swal("Update!", "Your imaginary file has been deleted.", "success");
+					this.submitted = false;
+					this.onFilterThemes(this.filterThemes.value);
+					this.closeFirstModal();
+			},(error) => this.errorMessage = error);
 	}
 
 	public editTheme(theme, template: TemplateRef<any>){
@@ -139,8 +185,8 @@ export class ListThemesComponent implements OnInit  {
 		this.themeForm.controls['description'].setValue(theme.description);
 		this.themeForm.controls['color'].setValue(theme.color);
 		this.pictureByte = theme.image;
-		this.themeForm.controls['startDate'].setValue(moment(theme.startDate).format('YYYY-MM-DD'));
-		this.themeForm.controls['endDate'].setValue(moment(theme.endDate).format('YYYY-MM-DD'));
+		this.themeForm.controls['startDate'].setValue(moment.utc(theme.startDate).format('YYYY-MM-DD'));
+		this.themeForm.controls['endDate'].setValue(moment.utc(theme.endDate).format('YYYY-MM-DD'));
 		this.modalRef = this.modalService.show(template);
 	}
 
@@ -150,6 +196,17 @@ export class ListThemesComponent implements OnInit  {
 		}else{
 			this.ListThemesComponent(moment().format('MM-DD-YYYY'));
 		}
+	}
+
+	public closeFirstModal() {
+    this.modalRef.hide();
+    this.modalRef = null;
+		this.pictureByte = '';
+		this.themeForm.reset();
+  }
+
+	public toDate(date){
+	 return moment.utc(date).format('MM/DD/YYYY');
 	}
 
 }

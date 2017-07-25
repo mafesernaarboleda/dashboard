@@ -22,11 +22,11 @@ export class ThemesService {
             .catch(Config.handleError);
   }
 
-	public updateTheme(theme){
+	public updateTheme(theme,id){
 		this.headers.set('Authorization', 'Bearer ' + sessionStorage.getItem('token'));
 		let options = new RequestOptions({ headers: this.headers });
 		return this.http
-						.put(`${Config.API}/theme/${theme._id}`, theme, options )
+						.put(`${Config.API}/theme/${id}`, theme, options )
 						.map(Config.extractData)
 						.catch(Config.handleError);
 	}
@@ -35,6 +35,16 @@ export class ThemesService {
 		this.headers.set('Authorization', 'Bearer ' +  sessionStorage.getItem('token'));
 		return this.http
 						.post(`${Config.API}/theme`, theme, { headers: this.headers } )
+						.map(Config.extractData)
+						.catch(Config.handleError);
+	}
+
+	public uploadImage(file){
+	let formData = new FormData();
+  formData.append('file', file);
+		this.headers.set('Authorization', 'Bearer ' +  sessionStorage.getItem('token'));
+		return this.http
+						.post(`${Config.API}/upload`, formData, { headers: this.headers } )
 						.map(Config.extractData)
 						.catch(Config.handleError);
 	}

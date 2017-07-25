@@ -49,7 +49,7 @@
 									<td>{{theme.description}}</td>
 									<td><div [style.background-color]="theme.color">{{theme.color}}</div></td>
 									<td><img width="20%" style="height: 20%" src="{{theme.image}}" alt=""></td>
-									<td>{{theme.startDate |  date:"MM/dd/yyyy"}}  - {{theme.endDate |  date:"MM/dd/yyyy"}}</td>
+									<td>{{toDate(theme.startDate)}}  - {{toDate(theme.endDate)}}</td>
 									<td><button type="button" class="btn btn-primary" (click)="editTheme(theme, template)"><i class="fa fa-pencil"></i></button> <button type="button" class="btn btn-danger" (click)="deleteTheme(theme)" ><i class="fa fa-trash-o"></i></button></td>
 								</tr>
 							</tbody>
