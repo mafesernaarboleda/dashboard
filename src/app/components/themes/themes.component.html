@@ -1,69 +1,82 @@
-<div class="wrapper wrapper-content animated fadeInRight">
-	<!-- begin row -->
-	<div class="row">
-		<div class="col-lg-12 service-title no-padding">
-			<div class="col-lg-6">
-			</div>
-			<div class="col-lg-6 no-padding pull-right ">
-				<button (click)="openModal(template)" class="btn btn-primary" type="button">CREATE NEW USER <i class="fa fa-plus-circle"></i></button>
-			</div>
-		</div>
-	</div>
-	<!-- end row -->
-	<!-- begin row -->
-	<div class="row">
-		<!-- begin panel -->
-		<div class="col-lg-12">
-			<div class="ibox float-e-margins workflow">
-				<!-- begin title -->
-				<div class="ibox-title ">
-					<h2><i class="fa fa-users"></i> List themes </h2>
-				</div>
-				<!-- end title -->
-				<!-- begin content -->
-				<div class="ibox-content">
-					<div class="row">
-						<form method="get" [formGroup]="filterThemes">
-							<div class="col-sm-3">
-							<div class="input-group"> 										<input type="date" formControlName="date" min="2000-01-02" class="form-control"> <span class="input-group-btn">
-											<button type="button" class="btn btn-primary" (click)="onFilterThemes(filterThemes.value)" > Filter</button> </span></div>
-										</div>
-						</form>
-					</div>
-					<!-- begin table -->
-					<div class="table-responsive">
-						<table class="table">
-							<thead>
-								<tr>
-									<th>Title</th>
-									<th>Description</th>
-									<th>Color</th>
-									<th>Image</th>
-									<th>Date</th>
-									<th>Actions</th>
-								</tr>
-							</thead>
-							<tbody>
-								<tr *ngFor="let theme of themes">
-									<td>{{theme.title}}</td>
-									<td>{{theme.description}}</td>
-									<td><div [style.background-color]="theme.color">{{theme.color}}</div></td>
-									<td><img width="20%" style="height: 20%" src="{{theme.image}}" alt=""></td>
-									<td>{{theme.startDate |  date:"MM/dd/yyyy"}}  - {{theme.endDate |  date:"MM/dd/yyyy"}}</td>
-									<td><button type="button" class="btn btn-primary" (click)="editTheme(theme, template)"><i class="fa fa-pencil"></i></button> <button type="button" class="btn btn-danger" (click)="deleteTheme(theme)" ><i class="fa fa-trash-o"></i></button></td>
-								</tr>
-							</tbody>
-						</table>
-					</div>
-					<!-- end table -->
-				</div>
-				<!-- end content -->
-				<!-- content -->
-			</div>
-		</div>
-		<!-- end panel -->
-	</div>
-	<!-- end row -->
+<section class="page-header">
+  <div class="container">
+    <div class="row">
+    </div>
+    <div class="row">
+      <div class="col-md-12">
+        <h1>
+          <i class="fa fa-list"></i> List themes
+        </h1>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="container">
+
+  <div class="row">
+    <div class="col-md-12">
+      <div class="row">
+        <div class="col-md-8">
+          <p class="lead">
+            BuzzCuts Themes
+          </p>
+        </div>
+        <div class="col-md-4">
+          <button (click)="openModal(template)" class="btn btn-lg btn-primary mt-xl pull-right" type="button">
+            CREATE NEW THEME <i class="fa fa-plus-circle"></i>
+          </button>
+        </div>
+      </div>
+      <hr>
+      <div class="row">
+        <div class="col-sm-12">
+          <form method="get" [formGroup]="filterThemes">
+            <div class="input-group">
+              <input class="form-control" type="date" formControlName="date" min="2000-01-02">
+              <span class="input-group-btn">
+                <button type="button" class="btn btn-primary" (click)="onFilterThemes(filterThemes.value)"><i class="fa fa-search"></i></button>
+              </span>
+            </div>
+          </form>
+        </div>
+      </div>
+      <div class="featured-boxes">
+        <div class="row">
+          <div class="col-sm-12">
+            <div class="table-responsive">
+              <table class="table table-bordered">
+                <thead>
+                  <tr>
+                    <th>Title</th>
+                    <th>Description</th>
+                    <th>Color</th>
+                    <th>Image</th>
+                    <th>Date</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let theme of themes">
+                    <td>{{theme.title}}</td>
+                    <td>{{theme.description}}</td>
+                    <td>
+                      <div [style.background-color]="theme.color" class="badge-color">{{theme.color}}</div>
+                    </td>
+                    <td><img width="30%" src="{{theme.image}}" alt=""></td>
+                    <td>{{theme.startDate | date:"MM/dd/yyyy"}} - {{theme.endDate | date:"MM/dd/yyyy"}}</td>
+                    <td><button type="button" class="btn btn-primary" (click)="editTheme(theme, template)"><i class="fa fa-pencil"></i></button>                    <button type="button" class="btn btn-danger" (click)="deleteTheme(theme)"><i class="fa fa-trash-o"></i></button></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
 </div>
 
 <ng-template #template>
@@ -74,54 +87,75 @@
     </button>
   </div>
   <div class="modal-body">
-		<form method="get" [formGroup]="themeForm" class="form-horizontal">
-		<div style="margin: 15px;">
-				<!-- Begin form -->
-						<div class="form-group">
-								<div class="col-sm-6">
-										<div class="input-group">
-												<span class="input-group-btn">
-														<span class="btn btn-info btn-file">
-																<input type="file" (change)="fileChangeEvent($event)"  multiple>
-														</span>
-												</span>
-										</div>
-								</div>
-								<div class="col-sm-6">
-									<img width="20%" class="img-theme" src="{{pictureByte}}" style="height: 20%" alt="">
-								</div>
-						</div>
-						<div class="form-group">
-								<div class="col-sm-6">
-									 <input type="text" formControlName="title" maxlength="250" placeholder="Title" class="form-control">
-									 <div [hidden]="themeForm.controls.title.valid || (themeForm.controls.title.pristine && !submitted)"><label class="text-danger">This field is required.</label></div>
-								</div>
-								<div class="col-sm-6">
-									<input type="text" formControlName="description" maxlength="250" placeholder="Description" class="form-control">
-									<div [hidden]="themeForm.controls.description.valid || (themeForm.controls.description.pristine && !submitted)"><label class="text-danger">This field is required.</label></div>
-								</div>
-						</div>
-						<div class="form-group">
-								<div class="col-sm-12">
-										 <input type="color" formControlName="color" class="form-control">
-										 <div [hidden]="themeForm.controls.color.valid || (themeForm.controls.color.pristine && !submitted)"><label class="text-danger">This field is required.</label></div>
-								</div>
-					</div>
-						<div class="form-group">
-							<div class="col-sm-6">
-								<input type="date" formControlName="startDate" min="2000-01-02" class="form-control">
-								<div [hidden]="themeForm.controls.startDate.valid || (themeForm.controls.startDate.pristine && !submitted)"><label class="text-danger">This field is required.</label></div>
-							</div>
-								<div class="col-sm-6">
-									<input type="date" formControlName="endDate" min="2000-01-02" class="form-control">
-									<div [hidden]="themeForm.controls.endDate.valid || (themeForm.controls.endDate.pristine && !submitted)"><label class="text-danger">This field is required.</label></div>
-								</div>
-						</div>
-				<!-- End form -->
-		</div>
-	</form>
+    <form id="demo-form" class="form-horizontal mb-lg" method="get" [formGroup]="themeForm" >
+      <div class="form-group mt-lg">
+        <label class="col-sm-3 control-label">Name</label>
+        <div class="col-sm-9">
+          <input type="text" formControlName="title" maxlength="250" placeholder="Theme name" class="form-control">
+          <div [hidden]="themeForm.controls.title.valid || (themeForm.controls.title.pristine && !submitted)">
+            <label class="text-danger">This field is required.</label>
+          </div>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="col-sm-3 control-label">Description</label>
+        <div class="col-sm-9">
+          <input type="text" formControlName="description" maxlength="250" placeholder="Type your description..." class="form-control">
+          <div [hidden]="themeForm.controls.description.valid || (themeForm.controls.description.pristine && !submitted)">
+            <label class="text-danger">This field is required.</label>
+          </div>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="col-sm-3 control-label">Color</label>
+        <div class="col-sm-9">
+          <input type="color" formControlName="color" class="form-control">
+            <div [hidden]="themeForm.controls.color.valid || (themeForm.controls.color.pristine && !submitted)">
+              <label class="text-danger">This field is required.</label>
+            </div>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="col-sm-3 control-label">Start Date</label>
+        <div class="col-sm-9">
+          <input type="date" formControlName="startDate" min="2000-01-02" class="form-control" />
+          <div [hidden]="themeForm.controls.startDate.valid || (themeForm.controls.startDate.pristine && !submitted)">
+            <label class="text-danger">This field is required.</label>
+          </div>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="col-sm-3 control-label">End Date</label>
+        <div class="col-sm-9">
+          <input type="date" formControlName="endDate" min="2000-01-02" class="form-control">
+          <div [hidden]="themeForm.controls.endDate.valid || (themeForm.controls.endDate.pristine && !submitted)">
+            <label class="text-danger">This field is required.</label>
+          </div>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="col-sm-3 control-label">Cover Image</label>
+        <div class="col-sm-9">
+          <div class="input-group">
+            <span class="input-group-btn">
+              <span class="btn btn-info btn-file">
+                  <input type="file" (change)="fileChangeEvent($event)"  multiple>
+              </span>
+            </span>
+          </div>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="col-sm-3 control-label"></label>
+        <div class="col-sm-9">
+          <img width="40%" class="img-theme" src="{{pictureByte}}"  alt="">
+        </div>
+      </div>
+    </form>
   </div>
-	<div class="modal-footer">
-		<button type="button" class="btn btn-success" (click)="onValidate(themeForm.value, themeForm.valid)">Save <i class="fa fa-floppy-o"></i></button>
-	</div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-primary" (click)="onValidate(themeForm.value, themeForm.valid)">
+      Save <i class="fa fa-floppy-o"></i>
+    </button>
+  </div>
 </ng-template>
