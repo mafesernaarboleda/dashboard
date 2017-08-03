@@ -13,7 +13,7 @@
     "start": "http-server dist/"
   },
   "engines": {
-    "node": "6.11.1"
+    "node": "6.6.0"
   },
   "private": true,
   "dependencies": {
