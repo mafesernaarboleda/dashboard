@@ -62,7 +62,7 @@
                               <input formControlName="username" type="text" class="form-control input-lg" placeholder="Username" />
                             </div>
                           </div>
-                          <div [hidden]="loginForm.controls.username.valid || (loginForm.controls.username.pristine && !productSubmit)">
+                          <div [hidden]="loginForm.controls.username.valid || (loginForm.controls.username.pristine)">
                             <label class="error">Incorrect mail format</label>
                           </div>
                         </div>
