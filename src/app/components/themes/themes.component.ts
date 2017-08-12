@@ -94,12 +94,12 @@ export class ListThemesComponent implements OnInit  {
 
 	public deleteTheme(theme){
 		swal({
-		  title: "Are you sure?",
-		  text: "Your will not be able to recover this imaginary file!",
+      title: "Are you sure?",
+      text: 'You are about to delete theme, please confirm to delete or close to cancel',
 		  type: "warning",
 		  showCancelButton: true,
 		  confirmButtonClass: "btn-danger",
-		  confirmButtonText: "Yes, delete it!",
+		  confirmButtonText: "Yes, delete!",
 		  closeOnConfirm: false
 		},() => {
 			const start =  moment.utc(theme.startDate);
@@ -118,7 +118,7 @@ export class ListThemesComponent implements OnInit  {
 			this.setData(theme);
 			this.themesService.updateTheme(this.theme.updateTheme(), theme._id).subscribe(
 				(response) => {
-					swal("Deleted!", "Your imaginary file has been deleted.", "success");
+					swal("Deleted!", "Theme successfully deleted", "success");
 					this.onFilterThemes(this.filterThemes.value);
 				},
 				(error) => this.errorMessage = error);
@@ -140,7 +140,7 @@ export class ListThemesComponent implements OnInit  {
 		  year: end.format('YYYY')
 		};
 		theme.active = 'true';
-		if(theme._id !== ''){
+		if(theme._id){
 			if (!this.file){
 				theme.image = this.pictureByte;
 				this.updateTheme(theme);
@@ -158,7 +158,7 @@ export class ListThemesComponent implements OnInit  {
 						this.setData(theme);
 						this.themesService.createTheme(this.theme.updateTheme()).subscribe(
 							(response) => {
-								swal("Saved!", "Your imaginary file has been deleted.", "success");
+								swal("Saved!", "Theme successfully created", "success");
 								this.onFilterThemes(this.filterThemes.value);
 								this.submitted = false;
 								this.closeFirstModal();
@@ -172,7 +172,7 @@ export class ListThemesComponent implements OnInit  {
 		this.setData(theme);
 		this.themesService.updateTheme(this.theme.updateTheme(), theme._id).subscribe(
 				(response) => {
-					swal("Update!", "Your imaginary file has been deleted.", "success");
+					swal("Update!", "Theme successfully updated", "success");
 					this.submitted = false;
 					this.onFilterThemes(this.filterThemes.value);
 					this.closeFirstModal();
