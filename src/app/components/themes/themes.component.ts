@@ -103,7 +103,7 @@ export class ListThemesComponent implements OnInit  {
 		  closeOnConfirm: false
 		},() => {
 			const start =  moment.utc(theme.startDate);
-			const end = moment.utc(theme.endDate);
+      const end = moment(start).add(1, 'days').startOf('day');
 			theme.active = 'false';
 			theme.startDate = {
 				day: start.format('D'),
@@ -128,7 +128,7 @@ export class ListThemesComponent implements OnInit  {
 	public onValidate(theme, isValid){
 		this.submitted = true;
 		const start =  moment.utc(theme.startDate);
-		const end = moment.utc(theme.endDate);
+    const end = moment(start).add(1, 'days').startOf('day');
 		theme.startDate = {
 		  day: start.format('D'),
 		  month: start.format('M'),
@@ -187,7 +187,6 @@ export class ListThemesComponent implements OnInit  {
 		this.themeForm.controls['color'].setValue(theme.color);
 		this.pictureByte = theme.image;
 		this.themeForm.controls['startDate'].setValue(moment.utc(theme.startDate).format('YYYY-MM-DD'));
-		this.themeForm.controls['endDate'].setValue(moment.utc(theme.endDate).format('YYYY-MM-DD'));
 		this.modalRef = this.modalService.show(template);
 	}
 
